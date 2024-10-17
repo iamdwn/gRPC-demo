@@ -8,7 +8,7 @@ namespace KoiCareSys.Data.Repository
     public class UnitRepository : GenericRepository<Unit>, IUnitRepository
     {
         private readonly UnitDAO _dao;
-        public UnitRepository() 
+        public UnitRepository()
         {
             _dao ??= new UnitDAO();
         }

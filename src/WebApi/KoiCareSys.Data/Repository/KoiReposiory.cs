@@ -8,7 +8,7 @@ namespace KoiCareSys.Data.Repository
     public class KoiReposiory : GenericRepository<Koi>, IKoiRepository
     {
         private readonly KoiDAO _dao;
-        public KoiReposiory() 
+        public KoiReposiory()
         {
             _dao ??= new KoiDAO();
         }

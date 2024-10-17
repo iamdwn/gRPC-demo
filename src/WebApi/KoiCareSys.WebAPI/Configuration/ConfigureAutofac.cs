@@ -1,6 +1,5 @@
 ﻿using Autofac;
 using Autofac.Extensions.DependencyInjection;
-using KoiCareSys.WebAPI.Configuration;
 
 namespace KoiCareSys.WebAPI.Configuration
 {

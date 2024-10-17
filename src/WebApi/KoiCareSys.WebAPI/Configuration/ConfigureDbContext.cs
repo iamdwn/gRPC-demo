@@ -1,8 +1,7 @@
 ﻿using Autofac;
-using Microsoft.EntityFrameworkCore;
-using KoiCareSys.Data;
-using Microsoft.Identity.Client;
 using KoiCareSys.Common;
+using KoiCareSys.Data;
+using Microsoft.EntityFrameworkCore;
 
 
 namespace KoiCareSys.WebAPI.Configuration

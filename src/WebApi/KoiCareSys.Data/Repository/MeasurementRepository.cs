@@ -8,7 +8,7 @@ namespace KoiCareSys.Data.Repository
     public class MeasurementRepository : GenericRepository<Measurement>, IMeasurementRepository
     {
         private readonly MeasurementDAO _dao;
-        public MeasurementRepository() 
+        public MeasurementRepository()
         {
             _dao ??= new MeasurementDAO();
         }

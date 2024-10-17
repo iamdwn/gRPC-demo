@@ -1,10 +1,4 @@
-﻿using KoiCareSys.Data.Models;
-using System;
-using System.Collections.Generic;
-using System.ComponentModel.DataAnnotations.Schema;
-using System.ComponentModel.DataAnnotations;
-using System.Linq;
-namespace KoiCareSys.Data.DTO
+﻿namespace KoiCareSys.Data.DTO
 {
     public class MeasureDataDTO
     {

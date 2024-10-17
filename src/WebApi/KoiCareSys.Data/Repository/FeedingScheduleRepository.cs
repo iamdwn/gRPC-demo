@@ -3,12 +3,7 @@ using KoiCareSys.Data.DAO;
 using KoiCareSys.Data.Models;
 using KoiCareSys.Data.Repository.Interface;
 using Microsoft.EntityFrameworkCore;
-using System;
-using System.Collections.Generic;
-using System.Linq;
 using System.Linq.Expressions;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace KoiCareSys.Data.Repository
 {
