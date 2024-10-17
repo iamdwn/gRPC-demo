@@ -1,0 +1,67 @@
+syntax = "proto3";
+
+option csharp_namespace = "KoiCareSys.Grpc.Protos";
+
+service PondManager {
+    rpc GetPondById (GetPondRequest) returns (PondReply);
+    rpc CreatePond (CreatePondRequest) returns (PondReply);
+    rpc UpdatePond (UpdatePondRequest) returns (PondReply);
+    rpc DeletePond (DeletePondRequest) returns (DeletePondReply);
+}
+
+message GetPondRequest {
+    string pond_id = 1;
+}
+
+message PondReply {
+    string id = 1;
+    string pond_name = 2;
+    float volume = 3;
+    float depth = 4;
+    int drain_count = 5;
+    int skimmer_count = 6;
+    float pump_capacity = 7;
+    string img_url = 8;
+    string note = 9;
+    string description = 10;
+    string status = 11;
+    bool is_qualified = 12;
+}
+
+message CreatePondRequest {
+    string pond_name = 1;
+    float volume = 2;
+    float depth = 3;
+    int drain_count = 4;
+    int skimmer_count = 5;
+    float pump_capacity = 6;
+    string img_url = 7;
+    string note = 8;
+    string description = 9;
+    string status = 10;
+    bool is_qualified = 11;
+    string user_id = 12;
+}
+
+message UpdatePondRequest {
+    string pond_id = 1;
+    string pond_name = 2;
+    float volume = 3;
+    float depth = 4;
+    int drain_count = 5;
+    int skimmer_count = 6;
+    float pump_capacity = 7;
+    string img_url = 8;
+    string note = 9;
+    string description = 10;
+    string status = 11;
+    bool is_qualified = 12;
+}
+
+message DeletePondRequest {
+    string pond_id = 1;
+}
+
+message DeletePondReply {
+    bool success = 1;
+}

@@ -1,0 +1,17 @@
+﻿@page "{id:guid}"
+@model KoiCareSys.WebApp.Pages.PondPage.PondDeleteModel
+@{
+    ViewData["Title"] = "Delete Pond";
+}
+
+<h2>Delete Pond</h2>
+
+<form method="post">
+    <div class="alert alert-danger">
+        Are you sure you want to delete this pond (@Model.Pond.PondName)?
+    </div>
+
+    <input type="hidden" asp-for="Pond.Id" />
+    <button type="submit" class="btn btn-danger">Delete</button>
+    <a asp-page="/PondPage/PondIndex" class="btn btn-secondary">Cancel</a>
+</form>

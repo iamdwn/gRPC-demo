@@ -1,0 +1,56 @@
+﻿@page
+@model KoiCareSys.WebApp.Pages.PondPage.PondIndexModel
+@{
+    ViewData["Title"] = "Pond Page";
+}
+
+<h1 style="color: black;">
+    Pond Board
+</h1>
+<a href="/PondPage/PondCreate" class="ico edit">Create</a>
+
+<table class="table table-striped" width="100%" border="0" cellspacing="0" cellpadding="0">
+    <thead>
+        <tr>
+            <th>No.</th>
+            <th>Pond Name</th>
+            <th>Volume</th>
+            <th>Depth</th>
+            <th>Drain Count</th>
+            <th>Skimmer Count</th>
+            <th>Pump Capacity</th>
+            <th>Img Url</th>
+            <th>Status</th>
+            <th>Is Qualified</th>
+            <th>Description</th>
+            <th>Note</th>
+            <th class="text-center" width="110">Content Control</th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var pond in Model.Ponds)
+        {
+            <tr class="@(Model.Ponds.IndexOf(pond) % 2 == 0 ? "odd" : "")">
+                <td>@(Model.Ponds.IndexOf(pond) + 1)</td>
+@*                 <td>@pond.Id</td> *@
+                <td>@pond.PondName</td>
+                <td>@pond.Volume</td>
+                <td>@pond.Depth</td>
+                <td>@pond.DrainCount</td>
+                <td>@pond.SkimmerCount</td>
+                <td>@pond.PumpCapacity</td>
+                <td>@pond.ImgUrl</td>
+                <td>@pond.Status</td>
+                <td>@(pond.IsQualified == true ? "Yes" : "No")</td>
+                <td>@pond.Description</td>
+                <td>@pond.Note</td>
+
+                <td class="text-center">
+                    <a asp-page="./PondDelete" asp-route-id="@pond.Id" class="ico del">Delete</a><a asp-page="./PondEdit" asp-route-id="@pond.Id" class="ico edit">Edit</a>
+                </td>
+
+            </tr>
+            }
+    </tbody>
+</table>
+

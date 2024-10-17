@@ -1,0 +1,64 @@
+﻿@page
+@model KoiCareSys.WebApp.Pages.UserPage.UserIndexModel
+@{
+    ViewData["Title"] = "User Page";
+}
+<!-- Container -->
+<div id="container">
+    <div class="shell">
+        <!-- Main -->
+        <div id="main">
+            <div class="cl">&nbsp;</div>
+            <!-- Content -->
+            <div id="content">
+                <!-- Box -->
+                <div class="box">
+                    <!-- Box Head -->
+                    <div class="box-head">
+                        <h2 class="left">Users</h2>
+                        <div class="right">
+                            <label>search users</label>
+                            <input type="text" class="field small-field" />
+                            <input type="submit" class="button" value="search" />
+                        </div>
+                    </div>
+                    <!-- End Box Head -->
+                    <!-- Table -->
+                    <div class="table">
+                        <table width="100%" border="0" cellspacing="0" cellpadding="0">
+                            <tr>
+                                <th>No. </th>
+                                <th>Id</th>
+                                <th>Email</th>
+                                <th>Full Name</th>
+                                <th>Status</th>
+                                <th>Phone Number</th>
+                                <th>Role</th>
+                                <th width="110" class="ac">Content Control</th>
+                            </tr>
+                                @foreach (var user in Model.Users)
+                                {
+                                    <tr class="@(Model.Users.IndexOf(user) + 1 % 2 == 0 ? "odd" : "")">
+                                        <td>@(Model.Users.IndexOf(user) + 1)</td>
+                                        <td>@user.Id</td>
+                                        <td>@user.Email</td>
+                                        <td>@user.FullName</td>
+                                        <td>@user.Status</td>
+                                        <td>@user.PhoneNumber</td>
+                                        <td>@user.Role</td>
+                                        <td><a href="#" class="ico del">Delete</a><a href="#" class="ico edit">Edit</a></td>
+                                    </tr>
+                                }
+                        </table>                       
+                    </div>
+                    <!-- Table -->
+                </div>
+                <!-- End Box -->
+            </div>
+            <!-- End Content -->           
+            <div class="cl">&nbsp;</div>
+        </div>
+        <!-- Main -->
+    </div>
+</div>
+<!-- End Container -->
