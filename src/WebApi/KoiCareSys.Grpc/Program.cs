@@ -1,5 +1,6 @@
 using KoiCareSys.Grpc.Protos;
 using KoiCareSys.Grpc.Services;
+using System.Globalization;
 
 namespace KoiCareSys.Grpc
 {
@@ -9,8 +10,13 @@ namespace KoiCareSys.Grpc
         {
             var builder = WebApplication.CreateBuilder(args);
 
+            CultureInfo.DefaultThreadCurrentCulture = new CultureInfo("en-US");
+            CultureInfo.DefaultThreadCurrentUICulture = new CultureInfo("en-US");
+
             // Add services to the container.
             builder.Services.AddGrpc();
+
+            builder.WebHost.UseUrls("http://localhost:5000");
 
             var app = builder.Build();
 

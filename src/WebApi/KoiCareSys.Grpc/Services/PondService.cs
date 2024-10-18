@@ -8,7 +8,7 @@ namespace KoiCareSys.Grpc.Protos
         {
             var pond = new PondReply
             {
-                Id = request.PondId,
+                Id = "fixed_id",
                 PondName = "Sample Pond",
                 Volume = 100.0f,
                 Depth = 5.0f,
@@ -21,6 +21,20 @@ namespace KoiCareSys.Grpc.Protos
                 Status = "Active",
                 IsQualified = true
             };
+
+            //var faker = new Faker<PondReply>("en") // Ensure the locale is set to English
+            //.RuleFor(p => p.Id, f => f.Random.Guid().ToString())
+            //.RuleFor(p => p.PondName, f => f.Lorem.Word())
+            //.RuleFor(p => p.Volume, f => f.Random.Float(50, 500))
+            //.RuleFor(p => p.Depth, f => f.Random.Float(2, 10))
+            //.RuleFor(p => p.DrainCount, f => f.Random.Int(1, 4))
+            //.RuleFor(p => p.SkimmerCount, f => f.Random.Int(0, 2))
+            //.RuleFor(p => p.PumpCapacity, f => f.Random.Float(5, 20))
+            //.RuleFor(p => p.ImgUrl, f => f.Internet.Url())
+            //.RuleFor(p => p.Note, f => f.Lorem.Sentence())
+            //.RuleFor(p => p.Description, f => f.Lorem.Paragraph())
+            //.RuleFor(p => p.Status, f => f.Random.Bool() ? "Active" : "Inactive")
+            //.RuleFor(p => p.IsQualified, f => f.Random.Bool());
 
             return Task.FromResult(pond);
         }
