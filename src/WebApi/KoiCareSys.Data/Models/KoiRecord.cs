@@ -14,6 +14,21 @@ public partial class KoiRecord
     [Column("id")]
     public Guid Id { get; set; } = Guid.NewGuid();
 
+    [Column("record_name")]
+    public string RecordName { get; set; }
+
+    [Column("color")]
+    public string Color { get; set; }
+
+    [Column("price")]
+    public double Price { get; set; }
+
+    [Column("description")]
+    public string Description { get; set; }
+
+    [Column("health_issue")]
+    public string HealthIssue { get; set; }
+
     [Column("weight")]
     public decimal? Weight { get; set; }
 

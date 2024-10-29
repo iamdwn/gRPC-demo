@@ -62,4 +62,7 @@ public partial class Pond
 
     [InverseProperty("Pond")]
     public ICollection<Measurement> Measurements { get; set; } = new List<Measurement>();
+
+    [InverseProperty("Pond")]
+    public ICollection<FeedingSchedule> FeedingSchedules { get; set; } = new List<FeedingSchedule>();
 }

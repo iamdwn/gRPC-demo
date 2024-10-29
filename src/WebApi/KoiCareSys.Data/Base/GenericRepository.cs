@@ -1,5 +1,5 @@
-﻿using KoiCareSys.Data.Models;
-using Microsoft.EntityFrameworkCore;
+﻿using Microsoft.EntityFrameworkCore;
+using System.Linq.Expressions;
 
 namespace KoiCareSys.Data.Base
 {
@@ -23,63 +23,58 @@ namespace KoiCareSys.Data.Base
         {
             return _context.Set<T>().ToList();
         }
-
-        public IQueryable<Pond> GetAllAsQuery()
-        {
-            return _context.Ponds.AsQueryable();
-        }
-
         public async Task<List<T>> GetAllAsync()
         {
             return await _context.Set<T>().ToListAsync();
         }
-        //public async Task<List<T>> GetAllAsync(
-        //    Expression<Func<T, bool>> filter = null,
-        //    Func<IQueryable<T>, IOrderedQueryable<T>> orderBy = null,
-        //    string includeProperties = "",
-        //    int? pageIndex = null,
-        //    int? pageSize = null,
-        //    bool noTracking = false)
-        //{
-        //    IQueryable<T> query = _context.Set<T>();
+        public async Task<List<T>> GetAllAsync(
+            Expression<Func<T, bool>> filter = null,
+            Func<IQueryable<T>, IOrderedQueryable<T>> orderBy = null,
+            string includeProperties = "",
+            int? pageIndex = null,
+            int? pageSize = null,
+            bool noTracking = false)
+        {
+            IQueryable<T> query = _context.Set<T>();
 
-        //    // Apply filtering if specified
-        //    if (filter != null)
-        //    {
-        //        query = query.Where(filter);
-        //    }
+            // Apply filtering if specified
+            if (filter != null)
+            {
+                query = query.Where(filter);
+            }
 
-        //    // Include related entities if specified
-        //    foreach (var includeProperty in includeProperties.Split(
-        //        new char[] { ',' }, StringSplitOptions.RemoveEmptyEntries))
-        //    {
-        //        query = query.Include(includeProperty);
-        //    }
+            // Include related entities if specified
+            foreach (var includeProperty in includeProperties.Split(
+                new char[] { ',' }, StringSplitOptions.RemoveEmptyEntries))
+            {
+                query = query.Include(includeProperty);
+            }
 
-        //    // Apply ordering if specified
-        //    if (orderBy != null)
-        //    {
-        //        query = orderBy(query);
-        //    }
+            // Apply ordering if specified
+            if (orderBy != null)
+            {
+                query = orderBy(query);
+            }
 
-        //    // Set tracking options
-        //    if (noTracking)
-        //    {
-        //        query = query.AsNoTracking();
-        //    }
+            // Set tracking options
+            if (noTracking)
+            {
+                query = query.AsNoTracking();
+            }
 
-        //    // Apply pagination if specified
-        //    if (pageIndex.HasValue && pageSize.HasValue)
-        //    {
-        //        int validPageIndex = pageIndex.Value > 0 ? pageIndex.Value - 1 : 0;
-        //        int validPageSize = pageSize.Value > 0 ? pageSize.Value : 10;
+            // Apply pagination if specified
+            if (pageIndex.HasValue && pageSize.HasValue)
+            {
+                int validPageIndex = pageIndex.Value > 0 ? pageIndex.Value - 1 : 0;
+                int validPageSize = pageSize.Value > 0 ? pageSize.Value : 10;
 
-        //        query = query.Skip(validPageIndex * validPageSize).Take(validPageSize);
-        //    }
+                query = query.Skip(validPageIndex * validPageSize).Take(validPageSize);
+            }
 
-        //    // Return the results as a list
-        //    return await query.ToListAsync();
-        //}
+            // Return the results as a list
+            return await query.ToListAsync();
+        }
+
 
         public void Create(T entity)
         {
@@ -99,8 +94,12 @@ namespace KoiCareSys.Data.Base
         //    tracker.State = EntityState.Modified;
         //    _context.SaveChanges();
         //}
+        public void CreateKoi(T entity)
+        {
+            _context.Add(entity);
+        }
 
-        public virtual void Update(T entityToUpdate)
+        public void Update(T entityToUpdate)
         {
             var trackedEntities = _context.ChangeTracker.Entries<T>().ToList();
             foreach (var trackedEntity in trackedEntities)

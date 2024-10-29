@@ -1,25 +1,57 @@
 ﻿using Grpc.Core;
+using KoiCareSys.Data;
+using KoiCareSys.Data.Enums;
+using KoiCareSys.Data.Models;
+using KoiCareSys.Service.Service.Interface;
 
 namespace KoiCareSys.Grpc.Protos
 {
     public class PondService : PondManager.PondManagerBase
     {
-        public override Task<PondReply> GetPondById(GetPondRequest request, ServerCallContext context)
+        private readonly IPondService _pondService;
+        private readonly UnitOfWork _unitOfWork;
+
+        public PondService(IPondService pondService, UnitOfWork unitOfWork)
         {
-            var pond = new PondReply
+            _pondService = pondService;
+            _unitOfWork = unitOfWork;
+        }
+
+        public override async Task<PondReply> GetPondById(GetPondRequest request, ServerCallContext context)
+        {
+
+            if (!Guid.TryParse(request.PondId, out Guid pondGuid))
             {
-                Id = "fixed_id",
-                PondName = "Sample Pond",
-                Volume = 100.0f,
-                Depth = 5.0f,
-                DrainCount = 2,
-                SkimmerCount = 1,
-                PumpCapacity = 15.0f,
-                ImgUrl = "http://example.com/pond.png",
-                Note = "Sample pond note",
-                Description = "Pond description",
-                Status = "Active",
-                IsQualified = true
+                throw new RpcException(new Status(StatusCode.InvalidArgument, "Invalid PondId format"));
+            }
+
+            var result = await _pondService.GetById(pondGuid);
+
+            if (!result.Status.Equals(1) || result.Data == null)
+            {
+                throw new RpcException(new Status(StatusCode.NotFound, "Pond not found"));
+            }
+            var pond = result.Data as Pond;
+
+            if (pond == null)
+            {
+                throw new RpcException(new Status(StatusCode.Internal, "Data type mismatch"));
+            }
+
+            return new PondReply
+            {
+                Id = pond.Id.ToString(),
+                PondName = pond.PondName,
+                Volume = (float)pond.Volume,
+                Depth = (float)pond.Depth,
+                DrainCount = pond.DrainCount ?? 0,
+                SkimmerCount = pond.SkimmerCount ?? 0,
+                PumpCapacity = (float)pond.PumpCapacity,
+                ImgUrl = pond.ImgUrl,
+                Note = pond.Note,
+                Description = pond.Description,
+                Status = pond.Status == null ? pond.Status.ToString() : PondStatus.Inactive.ToString(),
+                IsQualified = pond.IsQualified ?? false
             };
 
             //var faker = new Faker<PondReply>("en") // Ensure the locale is set to English
@@ -36,56 +68,148 @@ namespace KoiCareSys.Grpc.Protos
             //.RuleFor(p => p.Status, f => f.Random.Bool() ? "Active" : "Inactive")
             //.RuleFor(p => p.IsQualified, f => f.Random.Bool());
 
-            return Task.FromResult(pond);
+            //return await Task.FromResult(pond);
         }
 
-        public override Task<PondReply> CreatePond(CreatePondRequest request, ServerCallContext context)
+        public override async Task<PondReply> CreatePond(CreatePondRequest request, ServerCallContext context)
         {
-            var newPond = new PondReply
+            if (string.IsNullOrWhiteSpace(request.PondName))
             {
-                Id = "generated_id",
+                throw new RpcException(new Status(StatusCode.InvalidArgument, "Pond name cannot be empty."));
+            }
+
+            var newPond = new Data.DTO.PondDTO
+            {
                 PondName = request.PondName,
-                Volume = request.Volume,
-                Depth = request.Depth,
+                Volume = (decimal)request.Volume,
+                Depth = (decimal)request.Depth,
                 DrainCount = request.DrainCount,
                 SkimmerCount = request.SkimmerCount,
-                PumpCapacity = request.PumpCapacity,
+                PumpCapacity = (decimal)request.PumpCapacity,
                 ImgUrl = request.ImgUrl,
                 Note = request.Note,
                 Description = request.Description,
-                Status = request.Status,
+                Status = request.Status.Equals(1) ? PondStatus.Active : PondStatus.Inactive,
                 IsQualified = request.IsQualified
             };
 
-            return Task.FromResult(newPond);
-        }
+            var result = await _pondService.Create(newPond);
 
-        public override Task<PondReply> UpdatePond(UpdatePondRequest request, ServerCallContext context)
-        {
-            var updatedPond = new PondReply
+            if (!result.Status.Equals(1))
             {
-                Id = request.PondId,
+                throw new RpcException(new Status(StatusCode.Internal, "Failed to create pond."));
+            }
+
+            var existingPond = _unitOfWork.Pond.GetAllAsync(
+               filter: p => p.PondName.Equals(request.PondName)
+                ).Result.FirstOrDefault();
+
+            return new PondReply
+            {
+                Id = existingPond.Id.ToString(),
                 PondName = request.PondName,
-                Volume = request.Volume,
-                Depth = request.Depth,
+                Volume = (float)request.Volume,
+                Depth = (float)request.Depth,
                 DrainCount = request.DrainCount,
                 SkimmerCount = request.SkimmerCount,
-                PumpCapacity = request.PumpCapacity,
+                PumpCapacity = (float)request.PumpCapacity,
                 ImgUrl = request.ImgUrl,
                 Note = request.Note,
                 Description = request.Description,
-                Status = request.Status,
+                Status = request.Status.Equals(1) ? PondStatus.Active.ToString() : PondStatus.Inactive.ToString(),
                 IsQualified = request.IsQualified
             };
-
-            return Task.FromResult(updatedPond);
         }
 
-        public override Task<DeletePondReply> DeletePond(DeletePondRequest request, ServerCallContext context)
+        public override async Task<PondReply> UpdatePond(UpdatePondRequest request, ServerCallContext context)
         {
-            bool success = true;
+            if (!Guid.TryParse(request.PondId, out Guid pondGuid))
+            {
+                throw new RpcException(new Status(StatusCode.InvalidArgument, "Invalid PondId format"));
+            }
 
-            return Task.FromResult(new DeletePondReply { Success = success });
+            var pondResult = await _pondService.GetById(pondGuid);
+
+            if (pondResult.Status != 1 || pondResult.Data == null)
+            {
+                throw new RpcException(new Status(StatusCode.NotFound, "Pond not found"));
+            }
+
+            var pond = pondResult.Data as Pond;
+
+            if (pond == null)
+            {
+                throw new RpcException(new Status(StatusCode.Internal, "Data type mismatch"));
+            }
+
+            var updatedPond = new Data.DTO.PondDTO
+            {
+                Id = pondGuid,
+                PondName = request.PondName,
+                Volume = (decimal)request.Volume,
+                Depth = (decimal)request.Depth,
+                DrainCount = request.DrainCount,
+                SkimmerCount = request.SkimmerCount,
+                PumpCapacity = (decimal)request.PumpCapacity,
+                ImgUrl = request.ImgUrl,
+                Note = request.Note,
+                Description = request.Description,
+                Status = request.Status.Equals(1) ? PondStatus.Active : PondStatus.Inactive,
+                IsQualified = request.IsQualified,
+                UserId = pond.UserId
+            };
+
+            await _pondService.Update(updatedPond);
+
+            return new PondReply
+            {
+                Id = pondGuid.ToString(),
+                PondName = updatedPond.PondName,
+                Volume = (float)updatedPond.Volume,
+                Depth = (float)updatedPond.Depth,
+                DrainCount = updatedPond.DrainCount ?? 0,
+                SkimmerCount = updatedPond.SkimmerCount ?? 0,
+                PumpCapacity = (float)updatedPond.PumpCapacity,
+                ImgUrl = updatedPond.ImgUrl,
+                Note = updatedPond.Note,
+                Description = updatedPond.Description,
+                Status = updatedPond.Status == null ? PondStatus.Inactive.ToString() : pond.Status.ToString(),
+                IsQualified = updatedPond.IsQualified ?? false
+            };
+        }
+
+
+        public override async Task<DeletePondReply> DeletePond(DeletePondRequest request, ServerCallContext context)
+        {
+            bool success = false;
+
+            try
+            {
+                if (!Guid.TryParse(request.PondId, out Guid pondGuid))
+                {
+                    throw new RpcException(new Status(StatusCode.InvalidArgument, "Invalid PondId format"));
+                }
+
+                var pondResult = await _pondService.GetById(pondGuid);
+
+                if (pondResult.Status != 1 || pondResult.Data == null)
+                {
+                    throw new RpcException(new Status(StatusCode.NotFound, "Pond not found"));
+                }
+                var pond = pondResult.Data as Pond;
+
+                _pondService.DeleteById(pond.Id);
+                success = true;
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"Error deleting pond: {ex.Message}");
+            }
+
+            return new DeletePondReply
+            {
+                Success = success
+            };
         }
     }
 }

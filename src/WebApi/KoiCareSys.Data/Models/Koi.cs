@@ -65,7 +65,5 @@ public partial class Koi
     [InverseProperty("Koi")]
     public ICollection<KoiRecord> KoiRecords { get; set; } = new List<KoiRecord>();
 
-    [InverseProperty("Koi")]
-    public ICollection<FeedingSchedule> FeedingSchedules { get; set; } = new List<FeedingSchedule>();
 
 }

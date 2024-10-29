@@ -8,7 +8,6 @@ using KoiCareSys.Service.Service.Interface;
 using Microsoft.AspNetCore.OData;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.OData.ModelBuilder;
-using Microsoft.OpenApi.Models;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -29,10 +28,7 @@ builder.Services.AddControllers()
         .Count());
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();
-builder.Services.AddSwaggerGen(c =>
-{
-    c.SwaggerDoc("v1", new OpenApiInfo { Title = "KoiCareSys API", Version = "v1" });
-});
+builder.Services.AddSwaggerGen();
 
 // Add Unit of Work
 builder.Services.AddScoped<UnitOfWork>();
@@ -50,14 +46,14 @@ builder.Services.AddDbContext<ApplicationDbContext>(options =>
 // CORS
 builder.Services.AddCors(options =>
 {
-    options.AddPolicy("AllowSpecificOrigin",
-        policy =>
-        {
-            policy.WithOrigins("https://localhost:7250")
-                  .AllowAnyHeader()
-                  .AllowAnyMethod()
-                  .AllowCredentials();
-        });
+    options.AddPolicy("AllowAllOrigins",
+        builder => builder
+            //.AllowAnyOrigin()
+            .WithOrigins("https://localhost:7022")
+            .WithOrigins("https://localhost:7249")
+            .AllowAnyMethod()
+            .AllowAnyHeader()
+            .AllowCredentials());
 });
 
 // AutoMapper
@@ -73,7 +69,7 @@ if (app.Environment.IsDevelopment())
     app.UseSwaggerUI();
 }
 
-app.UseCors("AllowSpecificOrigin");
+app.UseCors("AllowAllOrigins");
 
 app.UseODataBatching();
 
