@@ -25,7 +25,7 @@ namespace KoiCareSys.Data
 
         public UserRepository User
         {
-            get { return userRepository ??= new UserRepository(); }
+            get { return userRepository ??= new UserRepository(_unitOfWorkContext); }
 
         }
 

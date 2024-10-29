@@ -44,7 +44,9 @@ namespace KoiCareSys.Service.Service
                     return new BusinessResult(Const.ERROR_EXCEPTION, "request cannot be null.");
                 }
 
-                var tempUser = await _unitOfWork.User.GetFirstUser();
+                var tempUser = _unitOfWork.User.GetAllAsync(
+                    filter: u => u.Id.Equals(dto.UserId)
+                    ).Result.FirstOrDefault();
 
                 if (tempUser == null)
                 {

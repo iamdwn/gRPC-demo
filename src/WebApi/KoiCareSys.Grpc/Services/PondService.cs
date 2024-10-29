@@ -73,6 +73,11 @@ namespace KoiCareSys.Grpc.Protos
 
         public override async Task<PondReply> CreatePond(CreatePondRequest request, ServerCallContext context)
         {
+            if (!Guid.TryParse(request.UserId, out Guid userGuid))
+            {
+                throw new RpcException(new Status(StatusCode.InvalidArgument, "Invalid PondId format"));
+            }
+
             if (string.IsNullOrWhiteSpace(request.PondName))
             {
                 throw new RpcException(new Status(StatusCode.InvalidArgument, "Pond name cannot be empty."));
@@ -90,7 +95,8 @@ namespace KoiCareSys.Grpc.Protos
                 Note = request.Note,
                 Description = request.Description,
                 Status = request.Status.Equals(1) ? PondStatus.Active : PondStatus.Inactive,
-                IsQualified = request.IsQualified
+                IsQualified = request.IsQualified,
+                UserId = userGuid
             };
 
             var result = await _pondService.Create(newPond);
