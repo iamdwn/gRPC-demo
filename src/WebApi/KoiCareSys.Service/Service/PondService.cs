@@ -62,9 +62,10 @@ namespace KoiCareSys.Service.Service
 
                 Pond create = new Pond()
                 {
+                    Id = new Guid(),
                     PondName = dto.PondName,
-                    Volume = dto.Volume,
-                    Depth = dto.Depth,
+                    Volume = dto.Volume ?? 0,
+                    Depth = dto.Depth ?? 0,
                     DrainCount = dto.DrainCount,
                     SkimmerCount = dto.SkimmerCount,
                     PumpCapacity = dto.PumpCapacity,

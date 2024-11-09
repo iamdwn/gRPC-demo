@@ -1,4 +1,5 @@
-﻿using KoiCareSys.Data.Repository;
+﻿using KoiCareSys.Data.Models;
+using KoiCareSys.Data.Repository;
 
 namespace KoiCareSys.Data
 {

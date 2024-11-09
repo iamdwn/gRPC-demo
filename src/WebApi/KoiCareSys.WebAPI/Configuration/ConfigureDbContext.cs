@@ -1,6 +1,6 @@
 ﻿using Autofac;
 using KoiCareSys.Common;
-using KoiCareSys.Data;
+using KoiCareSys.Data.Models;
 using Microsoft.EntityFrameworkCore;
 
 

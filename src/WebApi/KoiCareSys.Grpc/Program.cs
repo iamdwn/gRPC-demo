@@ -1,4 +1,5 @@
 using KoiCareSys.Data;
+using KoiCareSys.Data.Models;
 using KoiCareSys.Grpc.Services;
 using KoiCareSys.Service.Mappings;
 using KoiCareSys.Service.Service.Interface;
