@@ -2,7 +2,7 @@
 
 public partial class Pond
 {
-    public Guid Id { get; set; } = new Guid();
+    public Guid Id { get; set; } = Guid.NewGuid();
 
     public string PondName { get; set; } = null!;
 
@@ -18,7 +18,7 @@ public partial class Pond
 
     public string? ImgUrl { get; set; }
 
-    public int Status { get; set; }
+    public Enums.PondStatus Status { get; set; }
 
     public bool? IsQualified { get; set; }
 

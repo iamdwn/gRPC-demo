@@ -12,7 +12,7 @@
         public string ImgUrl { get; set; }
         public string Note { get; set; }
         public string Description { get; set; }
-        public int Status { get; set; }
+        public Enums.PondStatus Status { get; set; }
         public bool? IsQualified { get; set; }
         public Guid UserId { get; set; }
     }
